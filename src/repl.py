@@ -2,7 +2,7 @@
 
 from .commands import get_command
 from .commands.exit import ExitRequested
-from .errors import ShellError, UnknownCommandError
+from .errors import ShellError
 from .parser import parse
 from .prompt import build_prompt
 
@@ -14,43 +14,20 @@ class Repl:
         """Сформировать строку приглашения."""
         return build_prompt()
 
-    def run(self) -> None:
-        """Запустить цикл REPL до команды exit или Ctrl+D."""
-        while True:
-            try:
-                line = input(self.prompt())
-            except EOFError:
-                print()
-                break
-
-            try:
-                self.handle(line)
-            except ExitRequested:
-                print("Bye!")
-                break
-            except ShellError as exc:
-                print(f"Error: {exc}")
-            except Exception as exc:
-                print(f"Unexpected error: {exc}")
-
-    def handle(self, line: str) -> None:
-        """Обработать одну строку ввода.
-
-        Args:
-            line: сырая строка от пользователя.
-
-        Raises:
-            ShellError: при ошибках выполнения команды.
-            ExitRequested: при команде exit.
-        """
+    def process_line(self, line: str) -> str:
+        """Обработать строку без прерывания на ошибках."""
         parsed = parse(line)
         if parsed is None:
-            return
-
+            return ""
         command = get_command(parsed.name)
         if command is None:
-            raise UnknownCommandError(parsed.name)
-
-        result = command.execute(parsed.args)
-        if result:
-            print(result)
+            return f"Error: unknown command: '{parsed.name}'"
+        try:
+            result = command.execute(parsed.args)
+            return result if result else ""
+        except ExitRequested:
+            return "Bye!"
+        except ShellError as exc:
+            return f"Error: {exc}"
+        except Exception as exc:
+            return f"Unexpected error: {exc}"
