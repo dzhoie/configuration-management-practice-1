@@ -133,3 +133,19 @@ class VFS:
             is_last_child = (i == len(children) - 1)
             result += self.build_tree(child, prefix, is_last_child)
         return result
+
+    def rmdir(self, path):
+        """Удалить пустую папку из памяти."""
+        node = self.get_node(path)
+        if not node:
+            raise ValueError("No such directory")
+        if not node.is_dir:
+            raise ValueError("Not a directory")
+        if node.children:
+            raise ValueError("Directory not empty")
+        if node == self.root:
+            raise ValueError("Cannot remove root")
+
+        parent = self._find_parent(self.root, node)
+        if parent:
+            del parent.children[node.name]
