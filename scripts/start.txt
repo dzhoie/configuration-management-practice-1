@@ -1,16 +1,23 @@
 # Проверка базовых команд
+pwd
 ls
 
 # Переход и просмотр
 cd home
+pwd
 ls
 cd user
+pwd
 ls
+
+# Проверка дерева
+tree
 
 # Возврат назад
 cd ..
 ls
 cd /
+tree
 
 # Проверка обработки ошибок (скрипт остановится здесь)
-cd /invalid_folder
+tree /invalid_path

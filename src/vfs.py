@@ -106,3 +106,30 @@ class VFS:
         if not node or not node.is_dir:
             raise ValueError("No such directory")
         self.cwd = node
+
+    def get_pwd(self):
+        """Получить текущий путь (для команды pwd)."""
+        if self.cwd == self.root:
+            return "/"
+        parts = []
+        node = self.cwd
+        while node and node != self.root:
+            parts.append(node.name)
+            node = self._find_parent(self.root, node)
+        return "/" + "/".join(reversed(parts))
+
+    def build_tree(self, node=None, prefix="", is_last=True):
+        """Рекурсивно строит строку для команды tree."""
+        if node is None:
+            node = self.root
+            result = f"{node.name}\n"
+        else:
+            connector = "└── " if is_last else "├── "
+            result = prefix + connector + node.name + "\n"
+            prefix += "    " if is_last else "│   "
+
+        children = sorted(list(node.children.values()), key=lambda x: x.name)
+        for i, child in enumerate(children):
+            is_last_child = (i == len(children) - 1)
+            result += self.build_tree(child, prefix, is_last_child)
+        return result
