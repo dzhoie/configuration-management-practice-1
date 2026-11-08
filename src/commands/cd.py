@@ -1,20 +1,19 @@
-"""Команда cd — заглушка (этап 1)."""
-
-from .base import Command
+"""Команда cd — смена текущей директории."""
 
 
-class CdCommand(Command):
-    """Команда cd. Пока ничего не делает с VFS."""
+class CdCommand:
+    """Команда cd. Меняет текущую директорию в VFS."""
 
-    name = "cd"
+    def __init__(self, vfs):
+        """Создать команду с доступом к VFS."""
+        self.vfs = vfs
 
-    def execute(self, args: list[str]) -> str:
-        """Вернуть строку с именем команды и аргументами.
-
-        Args:
-            args: аргументы, переданные пользователем.
-
-        Returns:
-            Строка вида "cd: ['/home']".
-        """
-        return f"cd: {args}"
+    def execute(self, args):
+        """Выполнить cd."""
+        if not args:
+            return ""
+        try:
+            self.vfs.change_dir(args[0])
+            return ""
+        except Exception:
+            return f"cd: {args[0]}: No such file or directory"

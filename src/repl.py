@@ -10,6 +10,10 @@ from .prompt import build_prompt
 class Repl:
     """Интерактивный цикл эмулятора оболочки."""
 
+    def __init__(self, vfs=None):
+        """Создать REPL с заданной VFS."""
+        self.vfs = vfs
+
     def prompt(self) -> str:
         """Сформировать строку приглашения."""
         return build_prompt()
@@ -19,7 +23,7 @@ class Repl:
         parsed = parse(line)
         if parsed is None:
             return ""
-        command = get_command(parsed.name)
+        command = get_command(parsed.name, self.vfs)
         if command is None:
             return f"Error: unknown command: '{parsed.name}'"
         try:

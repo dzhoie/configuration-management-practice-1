@@ -1,0 +1,7 @@
+path,type,content
+/,dir,
+/home,dir,
+/home/user,dir,
+/home/user/hello.txt,file,Hello from CSV!
+/home/user/config.ini,file,theme=dark
+/readme.md,file,This is the root readme.

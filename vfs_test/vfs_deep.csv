@@ -1,0 +1,6 @@
+path,type,content
+/,dir,
+/a,dir,
+/a/b,dir,
+/a/b/c,dir,
+/a/b/c/deep_file.txt,file,Deep inside

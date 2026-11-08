@@ -1,20 +1,18 @@
-"""Команда ls — заглушка (этап 1)."""
-
-from .base import Command
+"""Команда ls — вывод содержимого директории."""
 
 
-class LsCommand(Command):
-    """Команда ls. Пока ничего не делает с VFS."""
+class LsCommand:
+    """Команда ls. Выводит содержимое директории в VFS."""
 
-    name = "ls"
+    def __init__(self, vfs):
+        """Создать команду с доступом к VFS."""
+        self.vfs = vfs
 
-    def execute(self, args: list[str]) -> str:
-        """Вернуть строку с именем команды и аргументами.
-
-        Args:
-            args: аргументы, переданные пользователем.
-
-        Returns:
-            Строка вида "ls: ['-la', '/home']".
-        """
-        return f"ls: {args}"
+    def execute(self, args):
+        """Выполнить ls."""
+        path = args[0] if args else ""
+        try:
+            items = self.vfs.list_dir(path)
+            return "  ".join(items)
+        except Exception:
+            return "ls: cannot access: No such file or directory"
